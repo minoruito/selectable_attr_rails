@@ -7,6 +7,14 @@ module SelectableAttrRails
       @update_timing = options[:when]
       self.extend(InstanceMethods) unless respond_to?(:update_entries)
     end
+    
+    def update_by_array(*args, &block)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      options = {:when => :first_time}.update(options)
+      @array_to_update = block_given? ? block : args.first
+      @update_timing = options[:when]
+      self.extend(InstanceMethods) unless respond_to?(:update_entries)
+    end    
 
     module Entry
 
@@ -62,11 +70,15 @@ module SelectableAttrRails
           end
         end
         records = nil
-        if @sql_to_update.respond_to?(:call)
-          records = @sql_to_update.call
+        if @array_to_update
+          records = @array_to_update
         else
-          sql = @sql_to_update.gsub(/\:locale/, I18n.locale.to_s.inspect)
-          records = ActiveRecord::Base.connection.select_rows(sql)
+          if @sql_to_update.respond_to?(:call)
+            records = @sql_to_update.call
+          else
+            sql = @sql_to_update.gsub(/\:locale/, I18n.locale.to_s.inspect)
+            records = ActiveRecord::Base.connection.select_rows(sql)
+          end
         end
 
         new_entries = []
