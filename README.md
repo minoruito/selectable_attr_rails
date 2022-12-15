@@ -166,7 +166,6 @@ DELETE後は、名称が元に戻ります。
 上記RoomPlanモデルの場合、
 
 config/locales/ja.yml
-
     ja:
       selectable_attrs:
         room_types:
@@ -176,7 +175,6 @@ config/locales/ja.yml
           triple: トリプル
       
 config/locales/en.yml
-
     en:
       selectable_attrs:
         room_types:
